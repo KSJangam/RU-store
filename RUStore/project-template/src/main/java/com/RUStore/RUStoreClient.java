@@ -1,7 +1,14 @@
 package com.RUStore;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
 /* any necessary Java packages here */
-//hello
+
 public class RUStoreClient {
 
 	/* any necessary class members here */
@@ -13,8 +20,12 @@ public class RUStoreClient {
 	 * @param host	host url
 	 * @param port	port number
 	 */
+	private Socket sock;
+	private String host;
+	private int port;
 	public RUStoreClient(String host, int port) {
-
+		this.host=host;
+		this.port=port;
 		// Implement here
 
 	}
@@ -24,10 +35,20 @@ public class RUStoreClient {
 	 * running on a given host and port.
 	 *
 	 * @return		n/a, however throw an exception if any issues occur
+	 * @throws IOException 
 	 */
-	public void connect() {
+	public void connect() throws IOException {
+	
+		sock = new Socket(host, port);
+		String line = "test1";	// user input
+		
+		DataOutputStream toServer = new DataOutputStream(sock.getOutputStream());
+		BufferedReader fromServer = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 
-		// Implement here
+		toServer.writeBytes(line + '\n');		// send the line to the server
+		String response = fromServer.readLine();	// read a one-line result
+		System.out.println(response);			// print it
+		
 
 	}
 
@@ -139,9 +160,10 @@ public class RUStoreClient {
 	 * the client socket.
 	 * 
 	 * @return		n/a, however throw an exception if any issues occur
+	 * @throws IOException 
 	 */
-	public void disconnect() {
-
+	public void disconnect() throws IOException {
+		sock.close();
 		// Implement here
 
 	}
