@@ -1,5 +1,7 @@
 package com.RUStore;
 
+import java.io.IOException;
+
 /**
  * This TestSandbox is meant for you to implement and extend to 
  * test your object store as you slowly implement both the client and server.
@@ -11,7 +13,7 @@ package com.RUStore;
 public class TestSandbox{
 
 	public static void main(String[] args) {
-
+		int i=-1;
 		// Create a new RUStoreClient
 		RUStoreClient client = new RUStoreClient("localhost", 12345);
 
@@ -24,7 +26,15 @@ public class TestSandbox{
 			e.printStackTrace();
 			System.out.println("Failed to connect to server.");
 		}
-
+		try {
+			i = client.put("wah", "wah".getBytes());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(i==0) {
+			System.out.println("Success");
+		}
 	}
 
 }

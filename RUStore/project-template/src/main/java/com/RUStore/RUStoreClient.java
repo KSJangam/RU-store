@@ -40,7 +40,7 @@ public class RUStoreClient {
 	public void connect() throws IOException {
 	
 		sock = new Socket(host, port);
-		String line = "test1";	// user input
+		String line = "test2";
 		
 		DataOutputStream toServer = new DataOutputStream(sock.getOutputStream());
 		BufferedReader fromServer = new BufferedReader(new InputStreamReader(sock.getInputStream()));
@@ -63,11 +63,22 @@ public class RUStoreClient {
 	 * @return		0 upon success
 	 *        		1 if key already exists
 	 *        		Throw an exception otherwise
+	 * @throws IOException 
 	 */
-	public int put(String key, byte[] data) {
+	public int put(String key, byte[] data) throws IOException {
+		System.out.println("putting");
+		String line = "put"+key;
+		DataOutputStream toServer = new DataOutputStream(sock.getOutputStream());
+		BufferedReader fromServer = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 
+		toServer.writeBytes(line + '\n');		// send the line to the server
+		String response = fromServer.readLine();	// read a one-line result
+		
 		// Implement here
-		return -1;
+		if(response.equals("e"))
+			return 1;
+		//toServer.write(data);
+		return 0;
 
 	}
 

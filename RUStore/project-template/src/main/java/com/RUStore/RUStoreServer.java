@@ -30,7 +30,7 @@ public class RUStoreServer {
 		// Try and parse port # from argument
 		int port = Integer.parseInt(args[0]);
 		ServerSocket svc = new ServerSocket(port, 5);
-		for (;;) {
+		
 			Socket conn = svc.accept();	 // wait for a connection
 	
 			BufferedReader fromClient = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -40,13 +40,22 @@ public class RUStoreServer {
 			line = fromClient.readLine();	// read the data from the client
 			System.out.println("got line \"" + line + "\"");	// show what we got
 
-			String response = "Acknowledged: " + line + '\n';	// do the work
+			String response = "Acknowledged : " + line + '\n';	// do the work
 
 			toClient.writeBytes(response);	// send the result
 			
+			while  ((line = fromClient.readLine()) != null) {	// read the data from the client
+				System.out.println("got requiest " + line.substring(0,3) + " with key "+line.substring(3));	// show what we got
+				toClient.writeBytes("ne");	// send the result
+			}
+			
+
 			System.out.println("closing the connection");
-			conn.close();		// close connection
-		}
+			conn.close();
+			
+			
+			svc.close();// close connection
+		
 
 	}
 
