@@ -1,6 +1,7 @@
 package com.RUStore;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -77,7 +78,7 @@ public class RUStoreClient {
 		// Implement here
 		if(response.equals("e"))
 			return 1;
-		//toServer.write(data);
+		toServer.write(data);
 		return 0;
 
 	}
@@ -109,12 +110,22 @@ public class RUStoreClient {
 	 * 
 	 * @return		object data as a byte array, null if key doesn't exist.
 	 *        		Throw an exception if any other issues occur.
+	 * @throws IOException 
 	 */
-	public byte[] get(String key) {
+	public byte[] get(String key) throws IOException {
+		System.out.println("getting");
+		String line = "get"+key;
+		DataOutputStream toServer = new DataOutputStream(sock.getOutputStream());
+		DataInputStream dataFromServer = new DataInputStream(sock.getInputStream());
+		BufferedReader fromServer = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 
+		toServer.writeBytes(line + '\n');		// send the line to the server
+		String response = fromServer.readLine();	// read a one-line result
+		
 		// Implement here
-		return null;
-
+		if(response.equals("ne"))
+			return null;
+		else return dataFromServer.readAllBytes();
 	}
 
 	/**
@@ -145,11 +156,23 @@ public class RUStoreClient {
 	 * @return		0 upon success
 	 *        		1 if key doesn't exist
 	 *        		Throw an exception otherwise
+	 * @throws IOException 
 	 */
-	public int remove(String key) {
+	public int remove(String key) throws IOException {
 
+		System.out.println("getting");
+		String line = "get"+key;
+		DataOutputStream toServer = new DataOutputStream(sock.getOutputStream());
+		DataInputStream dataFromServer = new DataInputStream(sock.getInputStream());
+		BufferedReader fromServer = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+
+		toServer.writeBytes(line + '\n');		// send the line to the server
+		String response = fromServer.readLine();	// read a one-line result
+		
 		// Implement here
-		return -1;
+		if(response.equals("ne"))
+			return 1;
+		else return 0;
 
 	}
 
@@ -160,8 +183,9 @@ public class RUStoreClient {
 	 *        		Throw an exception if any other issues occur.
 	 */
 	public String[] list() {
-
-		// Implement here
+		//first send lst message
+		//then get size of array and initialize array
+		//use a for loop to read in all the Strings
 		return null;
 
 	}

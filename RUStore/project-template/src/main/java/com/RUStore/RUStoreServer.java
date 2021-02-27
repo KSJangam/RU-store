@@ -61,6 +61,7 @@ public class RUStoreServer {
 				}
 				else if(req.equals("get")) {
 					if(objects.containsKey(line.substring(3))) {
+						toClient.writeBytes("e");
 						toClient.write(objects.get(line.substring(3)));
 					}
 					else
@@ -74,8 +75,9 @@ public class RUStoreServer {
 				}
 				else if(req.equals("rem")) {
 					if(objects.containsKey(line.substring(3))) {
-						objects.remove(line.substring(3));
+
 						toClient.writeBytes("e");
+						objects.remove(line.substring(3));
 					}
 					else
 						toClient.writeBytes("ne");
