@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 
 /* any necessary Java packages here */
 
@@ -19,8 +20,9 @@ public class RUStoreServer {
 	 * RUObjectServer Main(). Note: Accepts one argument -> port number
 	 * @throws IOException 
 	 */
+	
 	public static void main(String args[]) throws IOException{
-
+		HashMap<String, byte[]> objects = new HashMap<String, byte[]>();
 		// Check if at least one argument that is potentially a port number
 		if(args.length != 1) {
 			System.out.println("Invalid number of arguments. You must provide a port number.");
@@ -45,8 +47,36 @@ public class RUStoreServer {
 			toClient.writeBytes(response);	// send the result
 			
 			while  ((line = fromClient.readLine()) != null) {	// read the data from the client
-				System.out.println("got requiest " + line.substring(0,3) + " with key "+line.substring(3));	// show what we got
-				toClient.writeBytes("ne");	// send the result
+				System.out.println("got requiest " + line.substring(0,3));	// show what we got
+				String req=line.substring(0,3);
+				if(req.equals("put")) {
+					if(objects.containsKey(line.substring(3))) {
+						toClient.writeBytes("e");
+						
+					}
+					else {
+						toClient.writeBytes("ne");
+					}
+				}
+				else if(req.equals("get")) {
+					if(objects.containsKey(line.substring(3))) {
+						toClient.write(objects.get(line.substring(3)));
+					}
+					else
+						toClient.writeBytes("ne");
+				}
+				else if(req.equals("lst")) {
+					toClient.writeBytes(objects.keySet().toArray());	// send the result
+				}
+				else if(req.equals("rem")) {
+					if(objects.containsKey(line.substring(3))) {
+						objects.remove(line.substring(3));
+						toClient.writeBytes("e");
+					}
+					else
+						toClient.writeBytes("ne");
+				}
+				
 			}
 			
 
