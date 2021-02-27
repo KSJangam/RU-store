@@ -1,6 +1,7 @@
 package com.RUStore;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -37,7 +38,7 @@ public class RUStoreServer {
 	
 			BufferedReader fromClient = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			DataOutputStream toClient = new DataOutputStream(conn.getOutputStream());
-
+			DataInputStream dataFromClient = new DataInputStream(conn.getInputStream());
 			String line;
 			line = fromClient.readLine();	// read the data from the client
 			System.out.println("got line \"" + line + "\"");	// show what we got
@@ -52,7 +53,7 @@ public class RUStoreServer {
 				if(req.equals("put")) {
 					if(objects.containsKey(line.substring(3))) {
 						toClient.writeBytes("e");
-						
+						objects.put(line.substring(3), dataFromClient.readAllBytes());
 					}
 					else {
 						toClient.writeBytes("ne");
@@ -66,7 +67,10 @@ public class RUStoreServer {
 						toClient.writeBytes("ne");
 				}
 				else if(req.equals("lst")) {
-					toClient.writeBytes(objects.keySet().toArray());	// send the result
+					toClient.writeInt(objects.keySet().size());	// send the result
+					for(String k:objects.keySet()) {
+						toClient.writeBytes(k);
+					}
 				}
 				else if(req.equals("rem")) {
 					if(objects.containsKey(line.substring(3))) {
