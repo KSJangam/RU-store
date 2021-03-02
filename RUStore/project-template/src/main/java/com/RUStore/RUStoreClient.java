@@ -3,10 +3,12 @@ package com.RUStore;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 /* any necessary Java packages here */
 
@@ -94,12 +96,25 @@ public class RUStoreClient {
 	 * @return		0 upon success
 	 *        		1 if key already exists
 	 *        		Throw an exception otherwise
+	 * @throws IOException 
 	 */
-	public int put(String key, String file_path) {
+	public int put(String key, String file_path) throws IOException {
+		DataInputStream fromFile = new DataInputStream(new FileInputStream(file_path));
+		System.out.println("putting");
+		String line = "put"+key;
+		DataOutputStream toServer = new DataOutputStream(sock.getOutputStream());
+		BufferedReader fromServer = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 
-		// Implement here
-		return -1;
-
+		toServer.writeBytes(line + '\n');		// send the line to the server
+		String response = fromServer.readLine();	// read a one-line result
+		
+		if(response.equals("e")) {
+			fromFile.close();
+			return 1;
+		}
+		toServer.write(fromFile.readAllBytes());
+		fromFile.close();
+		return 0;
 	}
 
 	/**
@@ -138,12 +153,30 @@ public class RUStoreClient {
 	 * @return		0 upon success
 	 *        		1 if key doesn't exist
 	 *        		Throw an exception otherwise
+	 * @throws IOException 
 	 */
-	public int get(String key, String file_path) {
+	public int get(String key, String file_path) throws IOException {
+		DataOutputStream toFile = new DataOutputStream(new FileOutputStream(file_path));
+		System.out.println("getting");
+		String line = "get"+key;
+		DataOutputStream toServer = new DataOutputStream(sock.getOutputStream());
+		DataInputStream dataFromServer = new DataInputStream(sock.getInputStream());
+		BufferedReader fromServer = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 
+		toServer.writeBytes(line + '\n');		// send the line to the server
+		String response = fromServer.readLine();	// read a one-line result
+		
 		// Implement here
-		return -1;
-
+		if(response.equals("ne")) {
+			toFile.close();
+			return 1;
+		}
+		else { 
+			toFile.write(dataFromServer.readAllBytes());
+			toFile.close();
+			return 1;
+		}
+		
 	}
 
 	/**
@@ -163,7 +196,6 @@ public class RUStoreClient {
 		System.out.println("getting");
 		String line = "get"+key;
 		DataOutputStream toServer = new DataOutputStream(sock.getOutputStream());
-		DataInputStream dataFromServer = new DataInputStream(sock.getInputStream());
 		BufferedReader fromServer = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 
 		toServer.writeBytes(line + '\n');		// send the line to the server
