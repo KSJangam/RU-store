@@ -52,35 +52,34 @@ public class RUStoreServer {
 				String req=line.substring(0,3);
 				if(req.equals("put")) {
 					if(objects.containsKey(line.substring(3))) {
-						toClient.writeBytes("e");
+						toClient.writeBytes("e"+'\n');
 						objects.put(line.substring(3), dataFromClient.readAllBytes());
 					}
 					else {
-						toClient.writeBytes("ne");
+						toClient.writeBytes("ne"+'\n');
 					}
 				}
 				else if(req.equals("get")) {
 					if(objects.containsKey(line.substring(3))) {
-						toClient.writeBytes("e");
+						toClient.writeBytes("e"+'\n');
 						toClient.write(objects.get(line.substring(3)));
 					}
 					else
-						toClient.writeBytes("ne");
+						toClient.writeBytes("ne"+'\n');
 				}
 				else if(req.equals("lst")) {
 					toClient.writeInt(objects.keySet().size());	// send the result
 					for(String k:objects.keySet()) {
-						toClient.writeBytes(k);
+						toClient.writeBytes(k+'\n');
 					}
 				}
 				else if(req.equals("rem")) {
 					if(objects.containsKey(line.substring(3))) {
-
-						toClient.writeBytes("e");
 						objects.remove(line.substring(3));
+						toClient.writeBytes("e"+'\n');
 					}
 					else
-						toClient.writeBytes("ne");
+						toClient.writeBytes("ne"+'\n');
 				}
 				
 			}
@@ -90,7 +89,7 @@ public class RUStoreServer {
 			conn.close();
 			
 			
-			svc.close();// close connection
+			//svc.close();// close connection
 		
 
 	}

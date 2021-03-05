@@ -193,7 +193,7 @@ public class RUStoreClient {
 	 */
 	public int remove(String key) throws IOException {
 
-		System.out.println("getting");
+		System.out.println("removing");
 		String line = "get"+key;
 		DataOutputStream toServer = new DataOutputStream(sock.getOutputStream());
 		BufferedReader fromServer = new BufferedReader(new InputStreamReader(sock.getInputStream()));
@@ -213,12 +213,25 @@ public class RUStoreClient {
 	 * 
 	 * @return		List of keys as string array, null if there are no keys.
 	 *        		Throw an exception if any other issues occur.
+	 * @throws IOException 
 	 */
-	public String[] list() {
+	public String[] list() throws IOException {
+		System.out.println("list");
+		DataOutputStream toServer = new DataOutputStream(sock.getOutputStream());
+		BufferedReader fromServer = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+
+		toServer.writeBytes("lst"+'\n');	
+		int size = Integer.parseInt(fromServer.readLine());	
+		if(size == 0) return null;
+		String[] keys = new String[size];
+		for(int i=0; i<size; i++) {
+			keys[i]=fromServer.readLine();
+		}
+ 
 		//first send lst message
 		//then get size of array and initialize array
 		//use a for loop to read in all the Strings
-		return null;
+		return keys;
 
 	}
 
