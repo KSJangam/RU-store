@@ -23,7 +23,6 @@ public class RUStoreServer {
 	 */
 	
 	public static void main(String args[]) throws IOException{
-		HashMap<String, byte[]> objects = new HashMap<String, byte[]>();
 		// Check if at least one argument that is potentially a port number
 		if(args.length != 1) {
 			System.out.println("Invalid number of arguments. You must provide a port number.");
@@ -33,11 +32,15 @@ public class RUStoreServer {
 		// Try and parse port # from argument
 		int port = Integer.parseInt(args[0]);
 		ServerSocket svc = new ServerSocket(port, 5);
-		
+		for(;;) {
+			HashMap<String, byte[]> objects = new HashMap<String, byte[]>();
+			objects.put("wah", "wahoo".getBytes());
 			Socket conn = svc.accept();	 // wait for a connection
 	
 			BufferedReader fromClient = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			DataOutputStream toClient = new DataOutputStream(conn.getOutputStream());
+			DataOutputStream dataToClient =new DataOutputStream(conn.getOutputStream());
+			 
 			DataInputStream dataFromClient = new DataInputStream(conn.getInputStream());
 			String line;
 			line = fromClient.readLine();	// read the data from the client
@@ -62,7 +65,7 @@ public class RUStoreServer {
 				else if(req.equals("get")) {
 					if(objects.containsKey(line.substring(3))) {
 						toClient.writeBytes("e"+'\n');
-						toClient.write(objects.get(line.substring(3)));
+						dataToClient.write(objects.get(line.substring(3)));
 					}
 					else
 						toClient.writeBytes("ne"+'\n');
@@ -81,14 +84,22 @@ public class RUStoreServer {
 					else
 						toClient.writeBytes("ne"+'\n');
 				}
+				else if (req.equals("dsc")) {
+					System.out.println("closing the connection");
+					fromClient.close();
+					toClient.close();
+					dataFromClient.close();
+					dataToClient.close();
+					conn.close();
+					break;
+				}
 				
 			}
 			
 
-			System.out.println("closing the connection");
-			conn.close();
 			
 			
+		}
 			//svc.close();// close connection
 		
 

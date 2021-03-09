@@ -26,8 +26,9 @@ public class TestSandbox{
 			e.printStackTrace();
 			System.out.println("Failed to connect to server.");
 		}
+		
 		try {
-			i = client.put("wah", "wah".getBytes());
+			i = client.put("wah", "wahoo".getBytes());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -35,6 +36,44 @@ public class TestSandbox{
 		if(i==0) {
 			System.out.println("Success");
 		}
+		
+		try {
+			String r = new String (client.get("wah"));
+			System.out.println(r);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		i=-1;
+		/*
+		try {
+			i = client.remove("wah");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(i==0) {
+			System.out.println("Success");
+		}
+		try {
+			String[] keys = client.list();
+			System.out.println("read "+keys.length+" keys");
+			
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		try {
+			
+			client.disconnect();
+			System.out.println("disconnected");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		*/
 	}
+	
 
 }
