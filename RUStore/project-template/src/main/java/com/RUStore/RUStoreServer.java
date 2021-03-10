@@ -37,60 +37,59 @@ public class RUStoreServer {
 			objects.put("wah", "wahoo".getBytes());
 			Socket conn = svc.accept();	 // wait for a connection
 	
-			BufferedReader fromClient = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			DataOutputStream toClient = new DataOutputStream(conn.getOutputStream());
-			DataOutputStream dataToClient =new DataOutputStream(conn.getOutputStream());
 			 
-			DataInputStream dataFromClient = new DataInputStream(conn.getInputStream());
+			DataInputStream fromClient = new DataInputStream(conn.getInputStream());
 			String line;
-			line = fromClient.readLine();	// read the data from the client
+			line = new String(fromClient.readAllBytes());	// read the data from the client
 			System.out.println("got line \"" + line + "\"");	// show what we got
 
-			String response = "Acknowledged : " + line + '\n';	// do the work
+			String response = "Acknowledged : " + line;	// do the work
 
 			toClient.writeBytes(response);	// send the result
 			
-			while  ((line = fromClient.readLine()) != null) {	// read the data from the client
+			while  ((line = new String(fromClient.readAllBytes())) != null) {	// read the data from the client
 				System.out.println("got requiest " + line.substring(0,3));	// show what we got
 				String req=line.substring(0,3);
 				if(req.equals("put")) {
 					if(objects.containsKey(line.substring(3))) {
-						toClient.writeBytes("e"+'\n');
-						objects.put(line.substring(3), dataFromClient.readAllBytes());
+						toClient.writeBytes("e");
+						objects.put(line.substring(3), fromClient.readAllBytes());
 					}
 					else {
-						toClient.writeBytes("ne"+'\n');
+						toClient.writeBytes("ne");
 					}
 				}
 				else if(req.equals("get")) {
 					if(objects.containsKey(line.substring(3))) {
-						toClient.writeBytes("e"+'\n');
-						dataToClient.write(objects.get(line.substring(3)));
+						toClient.writeBytes("e");
+						fromClient.readAllBytes();
+						toClient.write(objects.get(line.substring(3)));
 					}
 					else
-						toClient.writeBytes("ne"+'\n');
+						toClient.writeBytes("ne");
 				}
 				else if(req.equals("lst")) {
 					toClient.writeInt(objects.keySet().size());	// send the result
 					for(String k:objects.keySet()) {
-						toClient.writeBytes(k+'\n');
+						toClient.writeBytes(k);
+						fromClient.readAllBytes();
 					}
 				}
 				else if(req.equals("rem")) {
 					if(objects.containsKey(line.substring(3))) {
 						objects.remove(line.substring(3));
-						toClient.writeBytes("e"+'\n');
+						toClient.writeBytes("e");
 					}
 					else
-						toClient.writeBytes("ne"+'\n');
+						toClient.writeBytes("ne");
 				}
 				else if (req.equals("dsc")) {
 					System.out.println("closing the connection");
 					fromClient.close();
 					toClient.close();
-					dataFromClient.close();
-					dataToClient.close();
 					conn.close();
+					svc.close();
 					break;
 				}
 				
