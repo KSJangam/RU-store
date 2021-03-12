@@ -34,17 +34,51 @@ public class TestSandbox{
 			e.printStackTrace();
 		}
 		if(i==0) {
-			System.out.println("Success");
+			System.out.println("wah Success");
 		}
-		
 		try {
-			String r = new String (client.get("wah"));
-			System.out.println(r);
+			i = client.put("wah", "wahoo".getBytes());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		i=-1;
+		if(i!=0)System.out.println("wah already exists");
+		try {
+			i = client.put("woh", "wahoo".getBytes());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(i==0)System.out.println("woh success");
+		try {
+			i = client.remove("wadh");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(i!=0)System.out.println("rem fail");
+		try {
+			i = client.put("wah", "wahoo".getBytes());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(i==0) {
+			System.out.println("wah Success again");
+		}
+		try {
+			String r = new String (client.get("wah"));
+			if(r!=null)
+				System.out.println(r);
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+
+			System.out.println("doesnt exist");
+			e.printStackTrace();
+		}
+		
+		
 		/*
 		try {
 			i = client.remove("wah");
@@ -63,16 +97,17 @@ public class TestSandbox{
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+		*/
 		try {
 			
 			client.disconnect();
 			System.out.println("disconnected");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			System.out.println("Dc failed");
 			e.printStackTrace();
 		}
-		*/
+		
 	}
 	
 
