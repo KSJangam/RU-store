@@ -47,19 +47,15 @@ public class RUStoreClient {
 	 * @throws IOException 
 	 */
 	public void connect() throws IOException {
-		byte[] b = new byte[1000];
-		System.out.println("entered connect");
+		byte[] b = new byte["accepted".getBytes().length];
 		sock = new Socket(host, port);
 		String line = "connecting";
 		
 		toServer = new DataOutputStream(sock.getOutputStream());
 		fromServer = new DataInputStream(sock.getInputStream());
-		System.out.println("writing");
-		toServer.write(line.getBytes());	
-		// send the line to the server
-		System.out.println("reading");
+		toServer.write(line.getBytes());
 		fromServer.read(b);
-		String response = new String(b);	// read a one-line result
+		String response = new String(b);
 		System.out.println(response);	
 	}
 
@@ -78,15 +74,13 @@ public class RUStoreClient {
 	 */
 	public int put(String key, byte[] data) throws IOException {
 		byte[] b = new byte[1];
-		System.out.println("putting");
 		String line = "put"+key;
 		toServer.writeInt(line.length());
 		fromServer.read(b);
-		toServer.write(line.getBytes());		// send the line to the server
+		toServer.write(line.getBytes());		
 		fromServer.read(b);
 		String response = new String(b);
 		System.out.println("got response "+response);
-		// Implement here
 		if(response.equals("e")) {
 			return 1;
 		}
@@ -116,15 +110,12 @@ public class RUStoreClient {
 	public int put(String key, String file_path) throws IOException {
 		DataInputStream fromFile = new DataInputStream(new FileInputStream(file_path));
 		byte[] b = new byte[1];
-		System.out.println("putting");
 		String line = "put"+key;
 		toServer.writeInt(line.length());
 		fromServer.read(b);
 		toServer.write(line.getBytes());		// send the line to the server
 		fromServer.read(b);
 		String response = new String(b);
-		System.out.println("got response "+response);
-		// Implement here
 		if(response.equals("e")) {
 			fromFile.close();
 			return 1;
@@ -153,7 +144,6 @@ public class RUStoreClient {
 	 */
 	public byte[] get(String key) throws IOException {
 		byte[] b = new byte[1];
-		System.out.println("getting");
 		String line = "get"+key;
 		System.out.println(line);
 		toServer.writeInt(line.length());
@@ -161,14 +151,10 @@ public class RUStoreClient {
 		toServer.write(line.getBytes());		// send the line to the server
 		fromServer.read(b);
 		String response = new String(b);
-		System.out.println("got response "+response+" length "+response.length());
-		// Implement here
 		if(response.equals("n")) {
-			System.out.println("Key not found");
 			return null;
 		}
 		else {
-			System.out.println("key found");
 			toServer.write("a".getBytes());
 			byte[] b2 = new byte[fromServer.readInt()];
 			toServer.write("a".getBytes());
@@ -191,8 +177,9 @@ public class RUStoreClient {
 	 */
 	public int get(String key, String file_path) throws IOException {
 		byte[] b = new byte[1];
-		DataOutputStream toFile = new DataOutputStream(new FileOutputStream(file_path));
-		System.out.println("getting");
+		File file = new File(file_path);
+		file.createNewFile();
+		DataOutputStream toFile = new DataOutputStream(new FileOutputStream(file));
 		String line = "get"+key;
 		System.out.println(line);
 		toServer.writeInt(line.length());
@@ -200,15 +187,11 @@ public class RUStoreClient {
 		toServer.write(line.getBytes());		// send the line to the server
 		fromServer.read(b);
 		String response = new String(b);
-		System.out.println("got response "+response+" length "+response.length());
-		// Implement here
 		if(response.equals("n")) {
-			System.out.println("Key not found");
 			toFile.close();
 			return 1;
 		}
 		else {
-			System.out.println("key found");
 			toServer.write("a".getBytes());
 			byte[] b2 = new byte[fromServer.readInt()];
 			toServer.write("a".getBytes());
@@ -234,7 +217,6 @@ public class RUStoreClient {
 	 */
 	public int remove(String key) throws IOException {
 		byte[] b= new byte[1];
-		System.out.println("removing");
 		String line = "rem"+key;
 		toServer.writeInt(line.length());
 		fromServer.read(b);
@@ -260,7 +242,6 @@ public class RUStoreClient {
 	 */
 	public String[] list() throws IOException {
 		byte[]b=new byte[1];
-		System.out.println("list");
 		toServer.writeInt(3);
 		fromServer.read(b);
 		toServer.write("lst".getBytes());	

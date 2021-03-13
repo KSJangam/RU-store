@@ -39,11 +39,10 @@ public class RUStoreServer {
 			 
 			DataInputStream fromClient = new DataInputStream(conn.getInputStream());
 			String line;
-			byte[] b= new byte[1100];
-			System.out.println("reading");
+			byte[] b= new byte["connecting".getBytes().length];
 			fromClient.read(b);
 			line = new String(b);	// read the data from the client
-			System.out.println("got line \"" + line + "\"");	// show what we got
+			System.out.println("got connection");	// show what we got
 
 			String response = "accepted";	// do the work
 			
@@ -53,7 +52,6 @@ public class RUStoreServer {
 			while  (fromClient.read(b)!=-1) {	// read the data from the client
 				line = new String(b);
 				byte[] b2=new byte[1];
-				System.out.println("from line "+line+" got request " + line.substring(0,3) + " and key "+line.substring(3));	// show what we got
 				String req=line.substring(0,3);
 				if(req.equals("put")) {
 					if(!objects.containsKey(line.substring(3))) {

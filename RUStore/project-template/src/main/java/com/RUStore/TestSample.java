@@ -104,8 +104,8 @@ public class TestSample{
 		/* Test with a file */
 
 		fileKey = "chapter1.txt";
-		inputPath = "./inputfiles/lofi.mp3";
-		outputPath = "./outputfiles/lofi_.mp3";
+		inputPath = "./inputfiles/solutions.pdf";
+		outputPath = "./outputfiles/solutions.pdf";
 
 		// PUT File
 		try {
